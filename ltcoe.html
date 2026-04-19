@@ -736,18 +736,28 @@ textarea{resize:vertical;min-height:80px}
         <div class="demo-row" onclick="setLoginRole('admin',document.querySelectorAll('.login-tab')[0])">
           <span class="demo-label">🛡️ Admin</span><span class="demo-val">admin@ltcoe.edu.in / admin123</span>
         </div>
-        <div class="demo-row" onclick="setLoginRole('faculty',document.querySelectorAll('.login-tab')[1])">
-          <span class="demo-label">👨‍🏫 Faculty</span><span class="demo-val">faculty@ltcoe.edu.in / faculty123</span>
+        <div class="demo-row" onclick="fillLogin('faculty@ltcoe.edu.in','faculty123','faculty')">
+          <span class="demo-label">👨‍🏫 Prof. Sharma</span><span class="demo-val">faculty@ltcoe.edu.in</span>
         </div>
-        <div class="demo-row" onclick="setLoginRole('student',document.querySelectorAll('.login-tab')[2])">
-          <span class="demo-label">🎒 Student</span><span class="demo-val">student@ltcoe.edu.in / student123</span>
+        <div class="demo-row" onclick="fillLogin('v.iyer@ltcoe.edu.in','faculty123','faculty')">
+          <span class="demo-label">👨‍🏫 Prof. Iyer</span><span class="demo-val">v.iyer@ltcoe.edu.in</span>
+        </div>
+        <div class="demo-row" onclick="fillLogin('vedant@ltcoe.edu.in','student123','student')">
+          <span class="demo-label">🎒 Vedant Pawar</span><span class="demo-val">vedant@ltcoe.edu.in</span>
+        </div>
+        <div class="demo-row" onclick="fillLogin('purva@ltcoe.edu.in','student123','student')">
+          <span class="demo-label">🎒 Purva Pankar</span><span class="demo-val">purva@ltcoe.edu.in</span>
+        </div>
+        <div class="demo-row" onclick="fillLogin('aditya@ltcoe.edu.in','student123','student')">
+          <span class="demo-label">🎒 Aditya Sharma</span><span class="demo-val">aditya@ltcoe.edu.in</span>
         </div>
       </div>
 
       <div class="login-footer">
-        <div class="login-footer-text">
-          Any professor can log in with their LTCOE email &amp; password <code style="color:#5ac8fa">faculty123</code><br>
-          Any student can log in with their LTCOE email &amp; password <code style="color:#5ac8fa">student123</code>
+        <div class="login-footer-text" style="background:rgba(90,200,250,0.08);border:1px solid rgba(90,200,250,0.2);border-radius:10px;padding:10px 14px;text-align:left">
+          <strong style="color:#5ac8fa">🔑 Universal Login</strong><br>
+          <span style="color:rgba(255,255,255,0.5)">Any registered faculty →</span> <code style="color:#5ac8fa">their-email / faculty123</code><br>
+          <span style="color:rgba(255,255,255,0.5)">Any approved student →</span> <code style="color:#5ac8fa">their-email / student123</code>
         </div>
       </div>
     </div>
@@ -2306,6 +2316,15 @@ function setLoginRole(role, el){
   if(role==='student'){ eml='student@ltcoe.edu.in'; pwd='student123';}
   $('login-email').value=eml;
   $('login-pass').value=pwd;
+}
+
+function fillLogin(email, pwd, role) {
+  loginRole = role;
+  document.querySelectorAll('.login-tab').forEach(t=>t.classList.remove('active'));
+  const tabIdx = role==='admin'?0:role==='faculty'?1:2;
+  document.querySelectorAll('.login-tab')[tabIdx].classList.add('active');
+  $('login-email').value = email;
+  $('login-pass').value = pwd;
 }
 
 async function doLogin(){

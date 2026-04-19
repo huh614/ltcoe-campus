@@ -71,15 +71,54 @@ def index():
 @app.route('/api/login', methods=['POST'])
 def login():
     data  = request.get_json()
-    email = (data.get('email') or '').strip()
+    email = (data.get('email') or '').strip().lower()
     pwd   = data.get('password', '')
     db    = get_db()
-    user  = db.execute(
-        "SELECT * FROM users WHERE email=? AND password=?", (email, pwd)
+
+    # 1. Try the users table first (admin, faculty, pre-registered students)
+    user = db.execute(
+        "SELECT * FROM users WHERE LOWER(email)=? AND password=?", (email, pwd)
     ).fetchone()
-    if not user:
-        return jsonify({'success': False, 'error': 'Invalid email or password'}), 401
-    return jsonify({'success': True, 'user': row_to_dict(user)})
+    if user:
+        return jsonify({'success': True, 'user': row_to_dict(user)})
+
+    # 2. If not found in users table, check the students table
+    #    Any approved student can log in with password 'student123'
+    if pwd == 'student123':
+        student = db.execute(
+            "SELECT * FROM students WHERE LOWER(email)=? AND status='Approved'",
+            (email,)
+        ).fetchone()
+        if student:
+            initials = (student['first'][0] + student['last'][0]).upper()
+            # Auto-create a user record so they appear in users table for next time
+            try:
+                db.execute("""
+                    INSERT OR IGNORE INTO users (email, password, role, name, initials, department, phone)
+                    VALUES (?, 'student123', 'Student', ?, ?, ?, ?)
+                """, (
+                    student['email'],
+                    f"{student['first']} {student['last']}",
+                    initials,
+                    student['branch'],
+                    student['phone'] or ''
+                ))
+                db.commit()
+            except Exception:
+                pass  # If insert fails (duplicate), that's fine
+
+            return jsonify({'success': True, 'user': {
+                'id': student['id'],
+                'email': student['email'],
+                'role': 'Student',
+                'name': f"{student['first']} {student['last']}",
+                'initials': initials,
+                'department': student['branch'],
+                'phone': student['phone'] or ''
+            }})
+
+    # 3. If not found anywhere
+    return jsonify({'success': False, 'error': 'Invalid email or password. Students use password: student123, Faculty use: faculty123'}), 401
 
 # ──────────────────────────────────────────────────────────────
 # STUDENTS / APPLICATIONS

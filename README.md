@@ -124,11 +124,14 @@ ltcoe-campus/
 
 ## 🌐 Deployment
 
-The app is configured for deployment on platforms like Render:
+The app is ready for 1-click deployment on Render. Click the button below to deploy your own instance for free:
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/huh614/ltcoe-campus)
+
+Alternatively, connect your GitHub repository to Render manually:
 1. Set the **Build Command**: `pip install -r requirements.txt`
 2. Set the **Start Command**: `gunicorn app:app`
-3. The app auto-creates the database on first run
+3. The app auto-creates the database on the first run.
 
 ---
 

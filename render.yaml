@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ltcoe-campus
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    plan: free
+    repo: https://github.com/huh614/ltcoe-campus
+    branch: master
